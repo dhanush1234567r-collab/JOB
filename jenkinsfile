@@ -1,0 +1,24 @@
+cat > Jenkinsfile << 'EOF'
+pipeline {
+  agent any
+  environment {
+    IMAGE = "dhanush2328/job-portal"
+  }
+  stages {
+    stage('Checkout') {
+      steps { checkout scm }
+    }
+    stage('Docker Build') {
+      steps { sh 'docker build -t $IMAGE:latest .' }
+    }
+    stage('Docker Push') {
+      steps {
+        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',
+          usernameVariable: 'U', passwordVariable: 'P')]) {
+          sh 'echo $P | docker login -u $U --password-stdin'
+          sh 'docker push $IMAGE:latest'
+        }
+      }
+    }
+  }
+}
