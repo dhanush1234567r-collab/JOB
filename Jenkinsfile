@@ -1,23 +1,35 @@
 pipeline {
-  agent any
-  environment {
-    IMAGE = "dhanush2328/job-portal"
-  }
-  stages {
-    stage('Checkout') {
-      steps { checkout scm }
-    }
-    stage('Docker Build') {
-      steps { sh 'docker build -t $IMAGE:latest .' }
-    }
-    stage('Docker Push') {
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',
-          usernameVariable: 'U', passwordVariable: 'P')]) {
-          sh 'echo $P | docker login -u $U --password-stdin'
-          sh 'docker push $IMAGE:latest'
+    agent any
+
+    stages {
+        stage('Checkout') {
+            steps {
+                git branch: 'main', url: 'https://github.com/dhanush1234567r-collab/JOB.git'
+            }
         }
-      }
+
+        stage('Build') {
+            steps {
+                sh 'docker compose build'
+            }
+        }
+
+        stage('Deploy') {
+            steps {
+                sh '''
+                docker rm -f job-portal-frontend job-portal-backend || true
+                docker compose up -d --build
+                '''
+            }
+        }
+
+        stage('Verify') {
+            steps {
+                sh '''
+                sleep 8
+                curl -f http://localhost:5001/api/jobs
+                '''
+            }
+        }
     }
-  }
 }

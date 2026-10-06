@@ -1,0 +1,63 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>JobPortal</title>
+  <link rel="stylesheet" href="style.css">
+</head>
+<body>
+  <nav>
+    <h1>JobPortal</h1>
+    <div class="links">
+      <a href="#">Home</a>
+      <a href="#jobs-section">Jobs</a>
+      <a href="#">Login</a>
+    </div>
+  </nav>
+
+  <section class="hero">
+    <h2>Find Your Dream Job</h2>
+    <p>Discover thousands of job opportunities</p>
+    <div class="filters">
+      <input id="search" type="text" placeholder="Search jobs...">
+      <button class="dark" onclick="render()">Search</button>
+      <select id="location" onchange="render()"><option value="">All Locations</option></select>
+      <select id="type" onchange="render()"><option value="">All Types</option></select>
+    </div>
+  </section>
+
+  <div class="container" id="jobs-section">
+    <h2>Available Jobs</h2>
+    <div id="jobs">Loading...</div>
+  </div>
+
+  <div class="modal" id="modal">
+    <div class="modal-box">
+      <span class="close" onclick="closeModal()">&#10005;</span>
+      <h3 id="modal-title">Apply</h3>
+
+      <label>Full name</label>
+      <input id="name" type="text">
+
+      <label>Email</label>
+      <input id="email" type="email">
+
+      <label>Phone</label>
+      <input id="phone" type="tel">
+
+      <label>Resume</label>
+      <input id="resume" type="file" accept=".pdf,.doc,.docx">
+
+      <label>Cover letter <span class="opt">(optional)</span></label>
+      <textarea id="cover" rows="5"></textarea>
+
+      <p id="msg" class="msg"></p>
+
+      <button class="submit" onclick="submitApply()">Submit application</button>
+    </div>
+  </div>
+
+  <script src="script.js"></script>
+</body>
+</html>

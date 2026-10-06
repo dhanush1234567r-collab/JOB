@@ -1,0 +1,14 @@
+services:
+  job-portal-backend:
+    build: ./backend
+    container_name: job-portal-backend
+    ports:
+      - "5001:5000"
+
+  job-portal-frontend:
+    build: ./frontend
+    container_name: job-portal-frontend
+    ports:
+      - "8081:80"
+    depends_on:
+      - job-portal-backend
