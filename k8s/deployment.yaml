@@ -1,0 +1,22 @@
+
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: job-portal
+spec:
+  replicas: 2
+  selector:
+    matchLabels:
+      app: job-portal
+  template:
+    metadata:
+      labels:
+        app: job-portal
+    spec:
+      containers:
+      - name: job-portal
+        image: dhanush2328/job-portal:latest
+        imagePullPolicy: Always
+        ports:
+        - containerPort: 5000
+

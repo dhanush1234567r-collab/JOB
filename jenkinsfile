@@ -1,9 +1,9 @@
-cd ~/job-portal
-cat > Jenkinsfile << 'EOF'
+
 pipeline {
   agent any
   environment {
     IMAGE = "dhanush2328/job-portal"
+    KUBECONFIG = "/var/lib/jenkins/.kube/config"
   }
   stages {
     stage('Checkout') {
@@ -21,6 +21,13 @@ pipeline {
         }
       }
     }
+    stage('Deploy') {
+      steps {
+        sh 'kubectl apply -f k8s/'
+        sh 'kubectl rollout restart deployment job-portal'
+      }
+    }
   }
 }
+
 
