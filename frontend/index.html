@@ -1,24 +1,194 @@
-cat > index.html << 'EOF'
 <!DOCTYPE html>
-<html lang="en"><head><meta charset="utf-8">
+<html lang="en">
+<head>
+<meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>JobPortal - Login</title><link rel="stylesheet" href="style.css"></head>
+<title>Dhanush Job Portal</title>
+<style>
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:Roboto,Arial,sans-serif;background:#f1f5f9;color:#1e293b}
+nav{background:#111;display:flex;justify-content:center;gap:28px;padding:18px}
+nav a{color:#fff;text-decoration:none;font-size:18px;cursor:pointer}
+nav a:hover{text-decoration:underline}
+.hero{background:linear-gradient(#3b8fe0,#c5dcf3);padding:60px 20px;text-align:center}
+.hero h1{font-size:40px;color:#1e293b}
+.hero p{margin:14px 0 28px;font-size:18px}
+.box{max-width:640px;margin:auto;display:flex;flex-direction:column;gap:12px}
+input,select,button{font:inherit;padding:14px;border-radius:8px;border:1px solid #cbd5e1;width:100%}
+select{background:#f1f1f1}
+.btn{background:#111;color:#fff;border:0;cursor:pointer}
+.btn:hover{background:#333}
+.wrap{max-width:900px;margin:auto;padding:40px 20px}
+.wrap h2{font-size:30px;margin-bottom:20px}
+.grid{display:grid;grid-template-columns:repeat(auto-fill,minmax(270px,1fr));gap:20px}
+.card{background:#fff;border-radius:14px;padding:24px;box-shadow:0 2px 8px rgba(0,0,0,.08)}
+.card h3{font-size:22px}
+.card .co{color:#555;margin:6px 0}
+.meta{color:#15803d;font-weight:700;margin:10px 0 16px}
+.apply{background:#2563eb;color:#fff;border:0;cursor:pointer;width:auto;padding:12px 20px}
+.apply.done{background:#15803d;cursor:default}
+.empty{padding:30px;text-align:center;color:#555}
+.modal{position:fixed;inset:0;background:rgba(0,0,0,.55);display:none;align-items:center;justify-content:center;padding:20px}
+.modal.on{display:flex}
+.modal .in{background:#fff;border-radius:14px;padding:28px;max-width:400px;width:100%;display:flex;flex-direction:column;gap:12px}
+.close{background:#e2e8f0;color:#111;border:0;cursor:pointer}
+.msg{color:#15803d;font-weight:700}
+:focus-visible{outline:3px solid #2563eb;outline-offset:2px}
+</style>
+</head>
 <body>
-<div class="nav"><b>JobPortal</b></div>
-<div class="wrap"><div class="card">
-<h2>Login</h2>
-<label>Username</label><input id="u" placeholder="admin">
-<label>Password</label><input id="p" type="password" placeholder="1234">
-<p class="err" id="e">Wrong username or password</p>
-<button class="btn" onclick="login()">Login</button>
-<p style="font-size:.85rem;color:#556">Demo: admin / 1234</p>
-</div></div>
+
+<nav>
+  <a href="#home">Home</a>
+  <a href="#jobs">Jobs</a>
+  <a id="loginLink">Login</a>
+</nav>
+
+<section class="hero" id="home">
+  <h1>Find Your Dream Job</h1>
+  <p>Discover thousands of job opportunities</p>
+  <div class="box">
+    <input id="q" placeholder="Search jobs...">
+    <button class="btn" id="searchBtn">Search</button>
+    <select id="loc"><option value="">All Locations</option></select>
+    <select id="type"><option value="">All Types</option></select>
+  </div>
+</section>
+
+<section class="wrap" id="jobs">
+  <h2>Available Jobs <span id="count" style="font-size:16px;color:#555"></span></h2>
+  <div class="grid" id="list"></div>
+</section>
+
+<div class="modal" id="loginModal">
+  <div class="in">
+    <h3>Login</h3>
+    <input id="lemail" type="email" placeholder="Email">
+    <input id="lpass" type="password" placeholder="Password">
+    <p class="msg" id="lmsg"></p>
+    <button class="btn" id="doLogin">Login</button>
+    <button class="close" data-close>Cancel</button>
+  </div>
+</div>
+
+<div class="modal" id="applyModal">
+  <div class="in">
+    <h3 id="applyTitle">Apply</h3>
+    <input id="aname" placeholder="Full name">
+    <input id="aemail" type="email" placeholder="Email">
+    <p class="msg" id="amsg"></p>
+    <button class="btn" id="doApply">Submit application</button>
+    <button class="close" data-close>Cancel</button>
+  </div>
+</div>
+
 <script>
-if(localStorage.getItem('user')) location.href='home.html';
-function login(){
-  var u=document.getElementById('u').value.trim(), p=document.getElementById('p').value;
-  if(u==='admin' && p==='1234'){ localStorage.setItem('user',u); location.href='home.html'; }
-  else document.getElementById('e').style.display='block';
+const JOBS = [
+  {id:1, title:"Python Developer", company:"Hexaware Technologies", location:"Chennai", type:"Full-time", salary:"₹6 LPA"},
+  {id:2, title:"DevOps Engineer", company:"Amazon", location:"Bangalore", type:"Full-time", salary:"₹18 LPA"},
+  {id:3, title:"Frontend Developer", company:"Zoho", location:"Chennai", type:"Full-time", salary:"₹8 LPA"},
+  {id:4, title:"Cloud Engineer", company:"Infosys", location:"Hyderabad", type:"Full-time", salary:"₹10 LPA"},
+  {id:5, title:"Data Analyst", company:"TCS", location:"Pune", type:"Full-time", salary:"₹7 LPA"},
+  {id:6, title:"Java Developer", company:"Wipro", location:"Bangalore", type:"Full-time", salary:"₹9 LPA"},
+  {id:7, title:"UI/UX Designer", company:"Freshworks", location:"Chennai", type:"Part-time", salary:"₹5 LPA"},
+  {id:8, title:"Software Intern", company:"Cognizant", location:"Coimbatore", type:"Internship", salary:"₹20k/month"},
+  {id:9, title:"Backend Developer", company:"Paytm", location:"Noida", type:"Full-time", salary:"₹12 LPA"},
+  {id:10, title:"QA Tester", company:"Accenture", location:"Hyderabad", type:"Contract", salary:"₹6 LPA"},
+  {id:11, title:"Kubernetes Administrator", company:"Red Hat", location:"Pune", type:"Full-time", salary:"₹16 LPA"},
+  {id:12, title:"Full Stack Developer", company:"Swiggy", location:"Bangalore", type:"Full-time", salary:"₹14 LPA"},
+  {id:13, title:"DevOps Intern", company:"Zoho", location:"Chennai", type:"Internship", salary:"₹15k/month"},
+  {id:14, title:"Machine Learning Engineer", company:"Google", location:"Hyderabad", type:"Full-time", salary:"₹25 LPA"},
+  {id:15, title:"Technical Support Engineer", company:"HCL", location:"Coimbatore", type:"Part-time", salary:"₹4 LPA"}
+];
+
+const $ = id => document.getElementById(id);
+const applied = new Set();
+let currentJob = null;
+let loggedIn = false;
+
+function fillSelect(el, values){
+  [...new Set(values)].sort().forEach(v => {
+    const o = document.createElement("option");
+    o.value = v; o.textContent = v; el.appendChild(o);
+  });
 }
-</script></body></html>
-EOF
+fillSelect($("loc"), JOBS.map(j => j.location));
+fillSelect($("type"), JOBS.map(j => j.type));
+
+function render(){
+  const q = $("q").value.trim().toLowerCase();
+  const loc = $("loc").value, type = $("type").value;
+  const out = JOBS.filter(j =>
+    (!q || (j.title + " " + j.company).toLowerCase().includes(q)) &&
+    (!loc || j.location === loc) &&
+    (!type || j.type === type)
+  );
+  $("count").textContent = "(" + out.length + ")";
+  if(!out.length){
+    $("list").innerHTML = '<div class="empty">No jobs match your search. Clear the filters and try again.</div>';
+    return;
+  }
+  $("list").innerHTML = out.map(j => `
+    <div class="card">
+      <h3>${j.title}</h3>
+      <div class="co">${j.company}</div>
+      <div>📍 ${j.location}</div>
+      <div class="meta">${j.type} | ${j.salary}</div>
+      <button class="apply ${applied.has(j.id) ? "done" : ""}" data-id="${j.id}">
+        ${applied.has(j.id) ? "Applied" : "Apply Now"}
+      </button>
+    </div>`).join("");
+}
+
+$("searchBtn").onclick = render;
+$("q").addEventListener("input", render);
+$("loc").onchange = render;
+$("type").onchange = render;
+
+$("list").addEventListener("click", e => {
+  const b = e.target.closest(".apply");
+  if(!b || applied.has(+b.dataset.id)) return;
+  currentJob = JOBS.find(j => j.id === +b.dataset.id);
+  $("applyTitle").textContent = "Apply: " + currentJob.title;
+  $("amsg").textContent = "";
+  $("applyModal").classList.add("on");
+});
+
+$("doApply").onclick = () => {
+  if(!$("aname").value.trim() || !$("aemail").value.includes("@")){
+    $("amsg").style.color = "#b91c1c";
+    $("amsg").textContent = "Enter your name and a valid email.";
+    return;
+  }
+  applied.add(currentJob.id);
+  $("amsg").style.color = "#15803d";
+  $("amsg").textContent = "Application sent to " + currentJob.company + ".";
+  render();
+  setTimeout(() => $("applyModal").classList.remove("on"), 1200);
+};
+
+$("loginLink").onclick = () => {
+  if(loggedIn){ loggedIn = false; $("loginLink").textContent = "Login"; return; }
+  $("lmsg").textContent = "";
+  $("loginModal").classList.add("on");
+};
+
+$("doLogin").onclick = () => {
+  if(!$("lemail").value.includes("@") || !$("lpass").value){
+    $("lmsg").style.color = "#b91c1c";
+    $("lmsg").textContent = "Enter your email and password.";
+    return;
+  }
+  loggedIn = true;
+  $("loginLink").textContent = "Logout";
+  $("loginModal").classList.remove("on");
+  location.hash = "#jobs";
+};
+
+document.querySelectorAll("[data-close]").forEach(b =>
+  b.onclick = () => document.querySelectorAll(".modal").forEach(m => m.classList.remove("on")));
+
+render();
+</script>
+</body>
+</html>
