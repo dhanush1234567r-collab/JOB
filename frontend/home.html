@@ -1,0 +1,19 @@
+cat > home.html << 'EOF'
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JobPortal - Home</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<div class="nav"><b>JobPortal</b>
+<div><a href="home.html">Home</a><a href="jobs.html">Jobs</a><a href="#" onclick="logout()">Logout</a></div></div>
+<div class="hero"><h1>Find Your Dream Job</h1><p>Discover thousands of job opportunities</p></div>
+<div class="wrap"><div class="card">
+<h3>Welcome, <span id="who"></span>!</h3>
+<a class="btn" href="jobs.html">Browse Jobs</a>
+</div></div>
+<script>
+if(!localStorage.getItem('user')) location.href='index.html';
+document.getElementById('who').textContent=localStorage.getItem('user');
+function logout(){localStorage.removeItem('user');location.href='index.html';}
+</script></body></html>
+EOF

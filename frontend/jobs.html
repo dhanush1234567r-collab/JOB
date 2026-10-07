@@ -1,0 +1,35 @@
+cat > jobs.html << 'EOF'
+<!DOCTYPE html>
+<html lang="en"><head><meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>JobPortal - Jobs</title><link rel="stylesheet" href="style.css"></head>
+<body>
+<div class="nav"><b>JobPortal</b>
+<div><a href="home.html">Home</a><a href="jobs.html">Jobs</a><a href="#" onclick="logout()">Logout</a></div></div>
+<div class="wrap">
+<h2>Latest Jobs</h2>
+<input id="q" placeholder="Search jobs..." oninput="render()">
+<div id="list"></div>
+</div>
+<script>
+if(!localStorage.getItem('user')) location.href='index.html';
+function logout(){localStorage.removeItem('user');location.href='index.html';}
+var jobs=[
+ {t:'Cloud Engineer',l:'Chennai',y:'Full-time'},
+ {t:'Python Developer',l:'Bangalore',y:'Remote'},
+ {t:'DevOps Intern',l:'Hyderabad',y:'Internship'},
+ {t:'Frontend Developer',l:'Coimbatore',y:'Full-time'},
+ {t:'AWS Support Engineer',l:'Chennai',y:'Contract'}
+];
+function render(){
+  var q=document.getElementById('q').value.toLowerCase();
+  document.getElementById('list').innerHTML=jobs
+   .filter(function(j){return (j.t+j.l+j.y).toLowerCase().includes(q)})
+   .map(function(j){return '<div class="job"><h3>'+j.t+'</h3><span>'+j.l+' · '+j.y+'</span></div>'}).join('')
+   || '<p>No jobs found</p>';
+}
+render();
+</script></body></html>
+EOF
+
+sudo cp index.html home.html jobs.html style.css /var/www/html/

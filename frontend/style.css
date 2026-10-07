@@ -1,48 +1,19 @@
-* { box-sizing: border-box; }
-body { font-family: Roboto, Arial, sans-serif; margin: 0; background: #f3f6fb; color: #222; }
-nav { background: #111; color: #fff; text-align: center; padding: 28px 20px; }
-nav h1 { margin: 0 0 16px; font-size: 40px; }
-nav .links a { color: #fff; text-decoration: none; margin: 0 14px; font-size: 20px; }
-.hero { background: linear-gradient(#3f8fe0, #c3dcf5); text-align: center; padding: 60px 20px; }
-.hero h2 { font-size: 44px; margin: 0 0 14px; }
-.hero p { font-size: 22px; margin: 0 0 30px; }
-.filters { max-width: 900px; margin: 0 auto; }
-.filters input, .filters select { display: block; width: 100%; max-width: 780px; margin: 0 auto 14px;
-  padding: 18px; font-size: 20px; border: 1px solid #ccc; border-radius: 10px; background: #fff; }
-.filters select { background: #eee; }
-.filters button.dark { display: block; width: 100%; max-width: 880px; margin: 0 auto 20px;
-  background: #111; padding: 18px; font-size: 22px; }
-.container { max-width: 900px; margin: 0 auto; padding: 0 20px 40px; }
-.container h2 { font-size: 38px; margin: 40px 0 24px; }
-.job { background: #fff; border-radius: 16px; padding: 24px; margin-bottom: 20px;
-       box-shadow: 0 2px 8px rgba(0,0,0,.08); }
-.job h3 { margin: 0 0 8px; font-size: 26px; }
-.company { color: #555; font-size: 20px; margin: 0 0 6px; }
-.location { font-size: 20px; margin: 0 0 8px; }
-.salary { color: #2e7d32; font-weight: bold; font-size: 20px; margin: 0 0 18px; }
-button { background: #2563eb; color: #fff; border: 0; padding: 14px 24px;
-         border-radius: 8px; font-size: 18px; cursor: pointer; }
-button:hover { opacity: .9; }
-button:disabled { opacity: .6; cursor: not-allowed; }
-
-/* Modal */
-.modal { display: none; position: fixed; inset: 0; background: rgba(0,0,0,.55);
-         align-items: center; justify-content: center; padding: 16px; z-index: 10; overflow-y: auto; }
-.modal.show { display: flex; }
-.modal-box { position: relative; background: #fff; border-radius: 24px; padding: 40px 28px 28px;
-             width: 100%; max-width: 520px; max-height: 95vh; overflow-y: auto; }
-.modal-box h3 { margin: 10px 0 28px; font-size: 32px; }
-.close { position: absolute; top: 22px; right: 28px; font-size: 28px; font-weight: bold; cursor: pointer; }
-.modal-box label { display: block; font-weight: bold; font-size: 20px; margin-bottom: 8px; }
-.modal-box .opt { font-weight: normal; color: #888; }
-.modal-box input[type=text], .modal-box input[type=email], .modal-box input[type=tel],
-.modal-box input[type=file], .modal-box textarea {
-  display: block; width: 100%; padding: 14px; margin-bottom: 22px;
-  font-size: 18px; border: 1px solid #ccc; border-radius: 10px; font-family: inherit; }
-.modal-box textarea { resize: vertical; }
-.modal-box button.submit { width: 100%; padding: 18px; font-size: 20px; border-radius: 10px; }
-
-/* Message */
-.msg { font-size: 20px; font-weight: bold; margin: 0 0 20px; }
-.msg.ok { color: #2e7d32; }
-.msg.err { color: #c62828; }
+cat > style.css << 'EOF'
+:root{--navy:#0d2a5e;--blue:#1456b8;--dark:#0e1b3d}
+*{box-sizing:border-box}
+body{margin:0;font-family:system-ui,"Segoe UI",Roboto,sans-serif;background:#f3f8ff;color:var(--navy)}
+.nav{display:flex;justify-content:space-between;align-items:center;padding:14px 6%;background:var(--dark);color:#fff}
+.nav b{font-size:1.3rem}
+.nav a{color:#fff;text-decoration:none;margin-left:18px}
+.hero{text-align:center;color:#fff;padding:70px 16px;background:linear-gradient(180deg,#1456b8,#0d2a5e)}
+.hero h1{margin:0 0 8px;font-size:2rem}
+.wrap{max-width:640px;margin:30px auto;padding:0 14px}
+.card{background:#fff;border-radius:12px;padding:22px;box-shadow:0 6px 20px rgba(13,42,94,.15)}
+input{width:100%;padding:11px;margin:6px 0 14px;border:1px solid #c5d3ea;border-radius:8px;font:inherit}
+.btn{display:inline-block;width:100%;padding:12px;border:0;border-radius:8px;background:var(--blue);color:#fff;font-weight:700;font-size:1rem;cursor:pointer;text-align:center;text-decoration:none}
+.btn:hover{background:var(--navy)}
+.job{background:#fff;border-left:4px solid var(--blue);border-radius:8px;padding:14px;margin-bottom:10px;box-shadow:0 2px 8px rgba(13,42,94,.1)}
+.job h3{margin:0 0 4px}
+.job span{font-size:.85rem;color:#556}
+.err{color:#c00;font-size:.9rem;display:none}
+EOF
