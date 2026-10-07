@@ -1,33 +1,58 @@
-
+cat > ~/job-portal/jenkinsfile <<'EOF'
 pipeline {
-  agent any
-  environment {
-    IMAGE = "dhanush2328/job-portal"
-    KUBECONFIG = "/var/lib/jenkins/.kube/config"
-  }
-  stages {
-    stage('Checkout') {
-      steps { checkout scm }
+    agent any
+
+    environment {
+        KUBECONFIG = '/var/lib/jenkins/.kube/config'
+        TAG = "v${BUILD_NUMBER}"
     }
-    stage('Docker Build') {
-      steps { sh 'docker build -t $IMAGE:latest .' }
-    }
-    stage('Docker Push') {
-      steps {
-        withCredentials([usernamePassword(credentialsId: 'dockerhub-creds',
-          usernameVariable: 'U', passwordVariable: 'P')]) {
-          sh 'echo $P | docker login -u $U --password-stdin'
-          sh 'docker push $IMAGE:latest'
+
+    stages {
+        stage('Checkout') {
+            steps {
+                checkout scm
+            }
         }
-      }
+
+        stage('Build Images') {
+            steps {
+                sh '''
+                docker compose build
+                docker tag job-portal-job-portal-frontend:latest job-portal-job-portal-frontend:$TAG
+                docker tag job-portal-job-portal-backend:latest job-portal-job-portal-backend:$TAG
+                '''
+            }
+        }
+
+        stage('Load Images to k3s') {
+            steps {
+                sh '''
+                docker save job-portal-job-portal-frontend:$TAG | sudo k3s ctr images import -
+                docker save job-portal-job-portal-backend:$TAG | sudo k3s ctr images import -
+                '''
+            }
+        }
+
+        stage('Deploy to Kubernetes') {
+            steps {
+                sh '''
+                kubectl set image deployment/job-portal-frontend job-portal-job-portal-frontend=job-portal-job-portal-frontend:$TAG
+                kubectl set image deployment/job-portal-backend job-portal-job-portal-backend=job-portal-job-portal-backend:$TAG
+                kubectl rollout status deployment/job-portal-frontend --timeout=120s
+                kubectl rollout status deployment/job-portal-backend --timeout=120s
+                '''
+            }
+        }
+
+        stage('Verify') {
+            steps {
+                sh '''
+                sleep 5
+                curl -f http://localhost:30081
+                kubectl get pods
+                '''
+            }
+        }
     }
-    stage('Deploy') {
-      steps {
-        sh 'kubectl apply -f k8s/'
-        sh 'kubectl rollout restart deployment job-portal'
-      }
-    }
-  }
 }
-
-
+EOF
